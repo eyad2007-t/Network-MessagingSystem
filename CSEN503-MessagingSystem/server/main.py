@@ -33,5 +33,10 @@ async def websocket_endpoint(websocket: WebSocket, last_id: int = 0):
                 storage.save(message)
                 await connections.send_to_all(message)
     except WebSocketDisconnect:
+        pass
+    finally:
         connections.disconnect(websocket)
 
+@app.get("/test", response_class=HTMLResponse)
+def test_page():
+    return TEST_PAGE.read_text(encoding="utf-8")

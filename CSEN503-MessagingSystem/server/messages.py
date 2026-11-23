@@ -7,11 +7,6 @@ next_id = 1
 
 
 def parse_client_message(raw: str) -> tuple[str, str]:
-    """Check text received from a client and return (sender, text).
-
-    Raises ValueError if it is not valid JSON, a field is missing,
-    a field is not text, or a field is empty.
-    """
     try:
         data = json.loads(raw)
         sender = data["sender"]
@@ -26,7 +21,6 @@ def parse_client_message(raw: str) -> tuple[str, str]:
 
 
 def build_message(sender: str, text: str) -> dict:
-    """Wrap sender and text in the full message format, adding id and time."""
     global next_id
     message = {
         "id": next_id,

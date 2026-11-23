@@ -1,0 +1,45 @@
+<!-- TMP TEST -->
+<h3 id="status">Connecting...</h3>
+<input id="box" placeholder="type a message">
+<button onclick="send()">Send</button>
+<ul id="log"></ul>
+<script>
+  const name = prompt("Your name?") || "anonymous";
+  const log = document.getElementById("log");
+  let lastId = 0;  
+  let ws;
+
+  function add(text) {
+    const li = document.createElement("li");
+    li.textContent = text;
+    log.appendChild(li);
+  }
+
+  function connect() {
+    ws = new WebSocket("ws://" + location.host + "/ws?last_id=" + lastId);
+    ws.onopen = () => document.getElementById("status").textContent = "Connected as " + name;
+    ws.onclose = () => {
+      document.getElementById("status").textContent = "Disconnected, reconnecting...";
+      setTimeout(connect, 2000);
+    };
+    ws.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      if (data.error) {
+        add("Error: " + data.error);
+        return;
+      }
+      if (data.id <= lastId) return; 
+      lastId = data.id;
+      add("[" + data.id + "] " + data.sender + ": " + data.text + "  (" + data.time + ")");
+    };
+  }
+
+  function send() {
+    const box = document.getElementById("box");
+    if (box.value === "") return;
+    ws.send(JSON.stringify({ sender: name, text: box.value }));
+    box.value = "";
+  }
+
+  connect();
+</script>
