@@ -4,10 +4,11 @@ from pathlib import Path
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.responses import HTMLResponse
 
-from server import connections, storage
+from server import connections, metrics, storage
 from server.messages import FORMAT_ERROR, build_message, parse_client_message
 
 app = FastAPI()
+app.include_router(metrics.router)
 
 TEST_PAGE = Path(__file__).resolve().parent.parent / "client" / "test.html"
 
