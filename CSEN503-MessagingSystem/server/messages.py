@@ -1,9 +1,11 @@
 import json
 from datetime import datetime, timezone
 
+from server import storage
+
 FORMAT_ERROR = 'Expected JSON like {"sender": "name", "text": "message"}'
 
-next_id = 1
+next_id = storage.last_id() + 1
 
 
 def parse_client_message(raw: str) -> tuple[str, str]:
